@@ -54,20 +54,30 @@ namespace common_lib
             /**
              * @brief 変化が合った時に出力するINFO関数
              *
+             * @param num (0~)
              * @param logger
              * @param fmt
              * @param args
              */
-            void RCLCPP_INFO_CHANGE(rclcpp::Logger logger, const char *fmt, auto... args)
+            void RCLCPP_INFO_CHANGE(int num,rclcpp::Logger logger, const char *fmt, auto... args)
             {
                 std::string data = format(fmt, args...);
-                if (mem_str_ != data) {
-                    mem_str_ = data;
+                if ((num+1)>mem_strs_.size())
+                {
+                    mem_strs_.push_back(data);
                     RCLCPP_INFO(logger, "%s", data.c_str());
+                }
+                else
+                {
+                    if (mem_strs_[num] != data)
+                    {
+                        mem_strs_[num] = data;
+                        RCLCPP_INFO(logger, "%s", data.c_str());
+                    }
                 }
             }
 
         private:
-            std::string mem_str_;
+            std::vector<std::string> mem_strs_;
     };
 } // namespace common_lib
