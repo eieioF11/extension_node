@@ -55,8 +55,13 @@ namespace common_lib {
      * @param column_names : colmnのname list
      */
     void init_data_logger(const std::string& name, const std::vector<std::string>& column_names) {
+      using namespace std::chrono_literals;
       init_log_pub_ = create_publisher<std_msgs::msg::String>("/data_logger/init", rclcpp::QoS(10).reliable());
       log_pub_      = create_publisher<std_msgs::msg::String>("/data_logger/log", rclcpp::QoS(10).reliable());
+      while (init_log_pub_->get_subscription_count()<1) {
+        RCLCPP_WARN(this->get_logger(), "Waiting for data logger to start!");
+        rclcpp::sleep_for(500ms);
+      }
       std_msgs::msg::String msg;
       msg.data = name + ",";
       for (const auto& column_name : column_names)
