@@ -58,7 +58,7 @@ namespace common_lib {
       using namespace std::chrono_literals;
       init_log_pub_ = create_publisher<std_msgs::msg::String>("/data_logger/init", rclcpp::QoS(10).reliable());
       log_pub_      = create_publisher<std_msgs::msg::String>("/data_logger/log", rclcpp::QoS(10).reliable());
-      while (init_log_pub_->get_subscription_count()<1) {
+      while (init_log_pub_->get_subscription_count() < 1 && rclcpp::ok()) {
         RCLCPP_WARN(this->get_logger(), "Waiting for data logger to start!");
         rclcpp::sleep_for(500ms);
       }
