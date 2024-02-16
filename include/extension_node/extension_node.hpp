@@ -2,6 +2,7 @@
 #include <iostream>
 #include <optional>
 #include <rclcpp/rclcpp.hpp>
+#include <rosgraph_msgs/msg/clock.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <string>
 
@@ -11,11 +12,40 @@ namespace common_lib {
     explicit ExtensionNode(const std::string& node_name, const rclcpp::NodeOptions& options = rclcpp::NodeOptions())
         : rclcpp::Node(node_name, options) {
       file_name_ = node_name;
+      time_sync_ = false;
     }
 
     explicit ExtensionNode(const std::string& node_name, const std::string& namespace_, const rclcpp::NodeOptions& options = rclcpp::NodeOptions())
         : rclcpp::Node(node_name, namespace_, options) {
       file_name_ = node_name;
+      time_sync_ = false;
+    }
+
+    /**
+     * @brief clock topicでの時刻同期を有効にする
+     *
+     * @param clock_topic_name
+     * @param qos
+     */
+    void set_time_sync(const std::string& clock_topic_name, const rclcpp::QoS& qos) {
+      time_sync_ = true;
+      clock_sub_ = this->create_subscription<rosgraph_msgs::msg::Clock>(clock_topic_name, qos,
+                                                                        [&](const rosgraph_msgs::msg::Clock::SharedPtr msg) { clock_ = msg->clock; });
+    }
+
+    /**
+     * @brief 現在時刻取得(時刻同期有効時はclock topicの時刻)
+     *
+     * @return rclcpp::Time
+     */
+    rclcpp::Time get_now() {
+      if (time_sync_) {
+        if (clock_)
+          return clock_.value();
+        else
+          RCLCPP_WARN(this->get_logger(), "Unable to obtain time");
+      }
+      return now();
     }
 
     /**
@@ -122,9 +152,12 @@ namespace common_lib {
     }
 
   private:
+    bool time_sync_ = false;
     std::string file_name_;
     std::vector<std::string> mem_strs_;
+    std::optional<rclcpp::Time> clock_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr init_log_pub_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr log_pub_;
+    rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_sub_;
   };
 } // namespace common_lib
