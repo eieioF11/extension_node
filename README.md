@@ -1,5 +1,15 @@
 # extension_node
 拡張機能付きノード
+## include
+```c++
+#include "extension_node/extension_node.hpp"
+```
+## package.xml
+```xml
+		︙
+  <depend>extension_node</depend> <!-- ←追加 -->
+		︙
+```
 ## example
 ### パラメータ取得
 
@@ -9,11 +19,11 @@
 #include "extension_node/extension_node.hpp"
 
 using namespace std::chrono_literals;
-class ExampleNode : public ExtensionNode
+class ExampleNode : public ext_rclcpp::ExtensionNode
 {
 public:
 	ExampleNode(const rclcpp::NodeOptions &options) : ExampleNode("", options) {}
-	ExampleNode(const std::string &name_space = "", const rclcpp::NodeOptions &options = rclcpp::NodeOptions()) : ExtensionNode("icp_scan_matcher_node", name_space, options), tf_buffer_(this->get_clock()), listener_(tf_buffer_)
+	ExampleNode(const std::string &name_space = "", const rclcpp::NodeOptions &options = rclcpp::NodeOptions()) : ext_rclcpp::ExtensionNode("icp_scan_matcher_node", name_space, options), tf_buffer_(this->get_clock()), listener_(tf_buffer_)
 	{
 		RCLCPP_INFO(this->get_logger(), "start node");
 		// get param
@@ -30,11 +40,11 @@ public:
 #include "extension_node/extension_node.hpp"
 
 using namespace std::chrono_literals;
-class ExampleNode : public ExtensionNode
+class ExampleNode : public ext_rclcpp::ExtensionNode
 {
 public:
 	ExampleNode(const rclcpp::NodeOptions &options) : ExampleNode("", options) {}
-	ExampleNode(const std::string &name_space = "", const rclcpp::NodeOptions &options = rclcpp::NodeOptions()) : ExtensionNode("icp_scan_matcher_node", name_space, options), tf_buffer_(this->get_clock()), listener_(tf_buffer_)
+	ExampleNode(const std::string &name_space = "", const rclcpp::NodeOptions &options = rclcpp::NodeOptions()) : ext_rclcpp::ExtensionNode("icp_scan_matcher_node", name_space, options), tf_buffer_(this->get_clock()), listener_(tf_buffer_)
 	{
 		RCLCPP_INFO(this->get_logger(), "start node");
 		// get param

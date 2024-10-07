@@ -7,7 +7,7 @@
 #include <string>
 #include <data_logger_utils/log_publisher.hpp>
 
-namespace common_lib {
+namespace ext_rclcpp {
   class ExtensionNode : public rclcpp::Node {
   public:
     data_logger::LogPublisher log_;
@@ -136,4 +136,4 @@ namespace common_lib {
     std::optional<rclcpp::Time> clock_;
     rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_sub_;
   };
-} // namespace common_lib
+} // namespace ext_rclcpp
