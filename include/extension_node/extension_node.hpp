@@ -1,11 +1,11 @@
 #pragma once
+#include <data_logger_utils/log_publisher.hpp>
 #include <iostream>
 #include <optional>
 #include <rclcpp/rclcpp.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <string>
-#include <data_logger_utils/log_publisher.hpp>
 
 namespace ext_rclcpp {
   class ExtensionNode : public rclcpp::Node {
@@ -25,6 +25,23 @@ namespace ext_rclcpp {
       time_sync_ = false;
       log_.set_node(this);
       log_.set_name(file_name_);
+    }
+
+    /**
+     * @brief clock topicでの現在時刻のpublish
+     *
+     * @param clock_topic_name
+     * @param period
+     * @param qos
+     */
+    template <typename DurationRepT, typename DurationT>
+    void publish_clock(const std::string& clock_topic_name, std::chrono::duration<DurationRepT, DurationT> period, const rclcpp::QoS& qos) {
+      clock_pub_       = this->create_publisher<rosgraph_msgs::msg::Clock>(clock_topic_name, qos);
+      clock_pub_timer_ = this->create_wall_timer(period, [&]() {
+        rosgraph_msgs::msg::Clock msg;
+        msg.clock = this->now();
+        clock_pub_->publish(msg);
+      });
     }
 
     /**
@@ -110,6 +127,8 @@ namespace ext_rclcpp {
     std::string file_name_;
     std::vector<std::string> mem_strs_;
     std::optional<rclcpp::Time> clock_;
+    rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_pub_;
     rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_sub_;
+    rclcpp::TimerBase::SharedPtr clock_pub_timer_;
   };
 } // namespace ext_rclcpp
