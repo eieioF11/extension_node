@@ -16,6 +16,7 @@ namespace ext_rclcpp {
       file_name_ = node_name;
       time_sync_ = false;
       log_.set_node(this);
+      log_.set_name(file_name_);
     }
 
     explicit ExtensionNode(const std::string& node_name, const std::string& namespace_, const rclcpp::NodeOptions& options = rclcpp::NodeOptions())
@@ -23,6 +24,7 @@ namespace ext_rclcpp {
       file_name_ = node_name;
       time_sync_ = false;
       log_.set_node(this);
+      log_.set_name(file_name_);
     }
 
     /**
@@ -80,32 +82,6 @@ namespace ext_rclcpp {
     void param(const std::string& name, T& value, const T& def) {
       declare_parameter(name, def);
       get_parameter(name, value);
-    }
-
-    /**
-     * @brief data_loggerの初期化(ファイル名指定)
-     *
-     * @param name : file name
-     * @param column_names : colmnのname list
-     */
-    void init_data_logger(const std::string& name, const std::vector<std::string>& column_names) {
-      log_.init_data_logger(name, column_names);
-    }
-    /**
-     * @brief data_loggerの初期化
-     *
-     * @param column_names : colmnのname list
-     */
-    void init_data_logger(const std::vector<std::string>& column_names) { init_data_logger(file_name_, column_names); }
-
-    /**
-     * @brief data_loggerへlogをpublish
-     *
-     * @param args : 記録する値
-     */
-    template <class... Args>
-    void log(Args... args) {
-      log_.publish(args...);
     }
 
     /**
