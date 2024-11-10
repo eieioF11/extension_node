@@ -15,3 +15,5 @@ rclcpp::Node extension library
   <depend>extension_node</depend> <!-- ← add -->
 		︙
 ```
+## Wiki
+https://github.com/eieioF11/extension_node/wiki
